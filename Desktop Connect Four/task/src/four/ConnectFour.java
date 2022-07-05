@@ -4,11 +4,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 public class ConnectFour extends JFrame {
-    private final Map<String, JButton> BUTTONS = new HashMap<>();
     private static final int ROWS = 6;
     private static final int COLUMNS = 7;
+    private final Map<String, JButton> BUTTONS = new HashMap<>();
 
     public ConnectFour() {
         super("Connect Four");
@@ -74,72 +75,67 @@ public class ConnectFour extends JFrame {
     }
 
     private boolean gameFinished() {
+        BiFunction<Integer, Integer, JButton> button = (i, j) -> BUTTONS.get(String.valueOf((char) (64 + j)) + i);
+
         // Check rows and columns
         for (int i = ROWS; i >= 1; i--) {
             for (int j = 1; j <= COLUMNS; j++) {
-                if (BUTTONS.get(String.valueOf((char) (64 + j)) + i).getText().equals(" ")) continue;
+                if (button.apply(i, j).getText().equals(" ")) continue;
 
                 // For rows
                 if (j <= COLUMNS - 3) {
-                    if (BUTTONS.get(String.valueOf((char) (64 + j)) + i).getText().equals(BUTTONS.get(String.valueOf((char) (64 + j + 1)) + i).getText()) &&
-                            BUTTONS.get(String.valueOf((char) (64 + j + 1)) + i).getText().equals(BUTTONS.get(String.valueOf((char) (64 + j + 2)) + i).getText()) &&
-                            BUTTONS.get(String.valueOf((char) (64 + j + 2)) + i).getText().equals(BUTTONS.get(String.valueOf((char) (64 + j + 3)) + i).getText())) {
-                        BUTTONS.get(String.valueOf((char) (64 + j)) + i).setBackground(Color.CYAN);
-                        BUTTONS.get(String.valueOf((char) (64 + j + 1)) + i).setBackground(Color.CYAN);
-                        BUTTONS.get(String.valueOf((char) (64 + j + 2)) + i).setBackground(Color.CYAN);
-                        BUTTONS.get(String.valueOf((char) (64 + j + 3)) + i).setBackground(Color.CYAN);
+                    if (button.apply(i, j).getText().equals(button.apply(i, j + 1).getText()) &&
+                            button.apply(i, j).getText().equals(button.apply(i, j + 2).getText()) &&
+                            button.apply(i, j).getText().equals(button.apply(i, j + 3).getText())) {
+                        button.apply(i, j).setBackground(Color.CYAN);
+                        button.apply(i, j + 1).setBackground(Color.CYAN);
+                        button.apply(i, j + 2).setBackground(Color.CYAN);
+                        button.apply(i, j + 3).setBackground(Color.CYAN);
 
                         return true;
                     }
                 }
 
-                // For columns
+                // For columns and diagonals
                 if (i >= 4) {
-                    if (BUTTONS.get(String.valueOf((char) (64 + j)) + i).getText().equals(BUTTONS.get(String.valueOf((char) (64 + j)) + (i - 1)).getText()) &&
-                            BUTTONS.get(String.valueOf((char) (64 + j)) + (i - 1)).getText().equals(BUTTONS.get(String.valueOf((char) (64 + j)) + (i - 2)).getText()) &&
-                            BUTTONS.get(String.valueOf((char) (64 + j)) + (i - 2)).getText().equals(BUTTONS.get(String.valueOf((char) (64 + j)) + (i - 3)).getText())) {
-                        BUTTONS.get(String.valueOf((char) (64 + j)) + i).setBackground(Color.CYAN);
-                        BUTTONS.get(String.valueOf((char) (64 + j)) + (i - 1)).setBackground(Color.CYAN);
-                        BUTTONS.get(String.valueOf((char) (64 + j)) + (i - 2)).setBackground(Color.CYAN);
-                        BUTTONS.get(String.valueOf((char) (64 + j)) + (i - 3)).setBackground(Color.CYAN);
+                    // For columns
+                    if (button.apply(i, j).getText().equals(button.apply(i - 1, j).getText()) &&
+                            button.apply(i, j).getText().equals(button.apply(i - 2, j).getText()) &&
+                            button.apply(i, j).getText().equals(button.apply(i - 3, j).getText())) {
+                        button.apply(i, j).setBackground(Color.CYAN);
+                        button.apply(i - 1, j).setBackground(Color.CYAN);
+                        button.apply(i - 2, j).setBackground(Color.CYAN);
+                        button.apply(i - 3, j).setBackground(Color.CYAN);
 
                         return true;
                     }
-                }
-            }
-        }
 
-        // Check diagonals
-        for (int i = ROWS; i >= 4; i--) {
-            for (int j = 1; j <= COLUMNS; j++) {
-                if (BUTTONS.get(String.valueOf((char) (64 + j)) + i).getText().equals(" ")) continue;
-                System.out.println(BUTTONS.get(String.valueOf((char) (64 + j)) + i).getName());
+                    // For left to right diagonals
+                    if (j <= COLUMNS - 3) {
+                        if (button.apply(i, j).getText().equals(button.apply(i - 1, j + 1).getText()) &&
+                                button.apply(i, j).getText().equals(button.apply(i - 2, j + 2).getText()) &&
+                                button.apply(i, j).getText().equals(button.apply(i - 3, j + 3).getText())) {
+                            button.apply(i, j).setBackground(Color.CYAN);
+                            button.apply(i - 1, j + 1).setBackground(Color.CYAN);
+                            button.apply(i - 2, j + 2).setBackground(Color.CYAN);
+                            button.apply(i - 3, j + 3).setBackground(Color.CYAN);
 
-                // For left to right diagonals
-                if (j <= COLUMNS - 3) {
-                    if (BUTTONS.get(String.valueOf((char) (64 + j)) + i).getText().equals(BUTTONS.get(String.valueOf((char) (64 + j + 1)) + (i - 1)).getText()) &&
-                            BUTTONS.get(String.valueOf((char) (64 + j + 1)) + (i - 1)).getText().equals(BUTTONS.get(String.valueOf((char) (64 + j + 2)) + (i - 2)).getText()) &&
-                            BUTTONS.get(String.valueOf((char) (64 + j + 2)) + (i - 2)).getText().equals(BUTTONS.get(String.valueOf((char) (64 + j + 3)) + (i - 3)).getText())) {
-                        BUTTONS.get(String.valueOf((char) (64 + j)) + i).setBackground(Color.CYAN);
-                        BUTTONS.get(String.valueOf((char) (64 + j + 1)) + (i - 1)).setBackground(Color.CYAN);
-                        BUTTONS.get(String.valueOf((char) (64 + j + 2)) + (i - 2)).setBackground(Color.CYAN);
-                        BUTTONS.get(String.valueOf((char) (64 + j + 3)) + (i - 3)).setBackground(Color.CYAN);
-
-                        return true;
+                            return true;
+                        }
                     }
-                }
 
-                // For right to left diagonals
-                if (j >= 4) {
-                    if (BUTTONS.get(String.valueOf((char) (64 + j)) + i).getText().equals(BUTTONS.get(String.valueOf((char) (64 + j - 1)) + (i - 1)).getText()) &&
-                            BUTTONS.get(String.valueOf((char) (64 + j - 1)) + (i - 1)).getText().equals(BUTTONS.get(String.valueOf((char) (64 + j - 2)) + (i - 2)).getText()) &&
-                            BUTTONS.get(String.valueOf((char) (64 + j - 2)) + (i - 2)).getText().equals(BUTTONS.get(String.valueOf((char) (64 + j - 3)) + (i - 3)).getText())) {
-                        BUTTONS.get(String.valueOf((char) (64 + j)) + i).setBackground(Color.CYAN);
-                        BUTTONS.get(String.valueOf((char) (64 + j - 1)) + (i - 1)).setBackground(Color.CYAN);
-                        BUTTONS.get(String.valueOf((char) (64 + j - 2)) + (i - 2)).setBackground(Color.CYAN);
-                        BUTTONS.get(String.valueOf((char) (64 + j - 3)) + (i - 3)).setBackground(Color.CYAN);
+                    // For right to left diagonals
+                    if (j >= 4) {
+                        if (button.apply(i, j).getText().equals(button.apply(i - 1, j - 1).getText()) &&
+                                button.apply(i, j).getText().equals(button.apply(i - 2, j - 2).getText()) &&
+                                button.apply(i, j).getText().equals(button.apply(i - 3, j - 3).getText())) {
+                            button.apply(i, j).setBackground(Color.CYAN);
+                            button.apply(i - 1, j - 1).setBackground(Color.CYAN);
+                            button.apply(i - 2, j - 2).setBackground(Color.CYAN);
+                            button.apply(i - 3, j - 3).setBackground(Color.CYAN);
 
-                        return true;
+                            return true;
+                        }
                     }
                 }
             }
